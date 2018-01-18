@@ -8,7 +8,7 @@ CRE_Controller -h for help.
 Example call:
 
 python3 scripts/CRE_Controller.py 
-  -s 'sowContracts/trainingSet/' 
-  -d results/ 
-  -i 'projectReports/<ProjectDump>' 
-  -o outputfile1
+  \n -s 'sowContracts/trainingSet/' 
+  \n-d results/ 
+  \n-i 'projectReports/"ProjectDump.csv"' 
+  \n-o outputfile1
