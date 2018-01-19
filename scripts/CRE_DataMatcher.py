@@ -7,6 +7,27 @@ from collections import OrderedDict
 
 titleMatchSplitCharacters = "[:_ \-&]"
 
+def stringWordMatcher( documentTitleString, projectNameString ):
+	
+	documentBasename = os.path.splitext( documentTitleString )[0]
+	
+	documentTitleSplit = re.split( titleMatchSplitCharacters, documentBasename )
+	
+	#Break project name into components
+	projectNameSplit = re.split( titleMatchSplitCharacters, projectNameString )
+	
+	nameWordMatchCount = 0
+			
+	for projectNameWord in projectNameSplit:
+				
+		for documentTitleWord in documentTitleSplit:
+					
+			if projectNameWord.lower() == documentTitleWord.lower():
+				nameWordMatchCount += 1
+		
+	return nameWordMatchCount
+	
+
 def projectDataMatcher( sowDataList, projectDataList, logger ):
 
 	print( "\n" )
@@ -14,34 +35,17 @@ def projectDataMatcher( sowDataList, projectDataList, logger ):
 	print( "\n" )
 	
 	combinedDataList = []
+	matchedCount, unmatchedCount = 0, 0;
 	
 	for sowItem in sowDataList:
 		
-		documentTitle = sowItem["title"]
-			
-		documentBasename = os.path.splitext( documentTitle )[0]
-		
-		# SOW Contract Titles seem to be split on "_"...assume this for now
-		documentTitleSplit = re.split( titleMatchSplitCharacters, documentBasename)
-		
-		maxNameWordMatchCount = 0
 		matchedProjectDict = OrderedDict()
+		maxNameWordMatchCount = 0
+		documentTitle = sowItem["title"]
 		
 		for projectEntryDict in projectDataList:
-			projectName = projectEntryDict[ "Project Name"]
 			
-			#Break project name into components
-			projectNameSplit = re.split( titleMatchSplitCharacters, projectName)
-			
-			nameWordMatchCount = 0
-			
-			for projectNameWord in projectNameSplit:
-				
-				for documentTitleWord in documentTitleSplit:
-					
-					if projectNameWord.lower() == documentTitleWord.lower():
-						nameWordMatchCount += 1
-						
+			nameWordMatchCount = stringWordMatcher( documentTitle, projectEntryDict[ "Project Name"])		
 			
 			if nameWordMatchCount > maxNameWordMatchCount:
 				maxNameWordMatchCount = nameWordMatchCount
@@ -52,10 +56,13 @@ def projectDataMatcher( sowDataList, projectDataList, logger ):
 			
 			sowItem.update(matchedProjectDict)
 			
+			matchedCount += 1;
 			combinedDataList.append(sowItem)
 		else:
 			logger.warning("SOW Contract: " + documentTitle + " was unable to find a matching project entry")
+			unmatchedCount +=1;
 		
-		
+	logger.debug("Match Summary: " + str(matchedCount) + " projects matched, " + str(unmatchedCount) + " projects unmatched")
+	
 	return combinedDataList
 		

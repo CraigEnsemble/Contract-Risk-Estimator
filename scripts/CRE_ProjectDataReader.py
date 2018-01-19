@@ -1,9 +1,10 @@
 # CRE_ProjectDataReader: Process project data TJ dump csv information into data object
 
 import csv
+import pandas
 import logging
 
-def readProjectData( projectDataFile, logger ):
+def readProjectDataFile( projectDataFile, logger ):
 	
 	logger.debug("Reading project data from: " + projectDataFile)
 	print( "\n" )
@@ -13,6 +14,7 @@ def readProjectData( projectDataFile, logger ):
 	projectDataList = []
 	for projectLine in projectDataCsvReader:
 		projectDataList.append( projectLine )
-		#logger.debug( projectLine )
 		
-	return projectDataList
+	projectDataFrame = pandas.read_csv( projectDataFile )
+		
+	return projectDataList, projectDataFrame

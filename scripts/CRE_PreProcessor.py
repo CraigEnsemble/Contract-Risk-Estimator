@@ -1,5 +1,5 @@
-# CRE_Controller: Controller Script for executing CRE steps
-# Type CRE_Controller -h on the command line for input help
+# CRE_PreProcessor: Preprocessing script to read project and SOW Contract data and save into data model
+# Type CRE_Preprocessor -h on the command line for input help
 
 # Imports
 import sys
@@ -12,8 +12,7 @@ from CRE_Logging import setupLogging
 from CRE_ProjectDataReader import readProjectDataFile
 from CRE_ContractProcessor import processContracts
 from CRE_DataMatcher import projectDataMatcher
-import CRE_DataModelPackager
-from CRE_ModelLibrary import simpleModel
+from CRE_DataModelPackager import saveDataModel, saveDataFrame
 
 
 # Create logging instance
@@ -27,21 +26,19 @@ setupLogging( outputDirectory, outputDataFile, logger )
 
 # Read project actuals data from TJ dump
 projectDataList, projectDataFrame = readProjectDataFile( projectDataFile, logger )
+#pprint.pprint( projectDataList )
 
 # Process sow contract documents into data objects
 sowDataDict = processContracts( sowLocation, logger )
 
 # Match and combine project data object with sow contract object
 combinedDataList = projectDataMatcher( sowDataDict, projectDataList, logger )
+#print( combinedDataList )
 
 # Save the combined data model to disk for any future use
 dataModelFilename = saveDataModel( combinedDataList, outputDirectory, outputDataFile, logger )
 
-# Technically don't need to do this, just verifying that we can dump/load data correctly
-dataModelList = readDataModel( dataModelFilename, logger)
-#print( dataModelList )
+dataFrameFilename = saveDataFrame( projectDataFrame, outputDirectory, outputDataFile, logger )
 
-testResults = simpleModel( dataModelList, logger )
-
-print("\n\n")
-logger.debug("CRE_Controller exiting normally..." )	
+print("\n")
+logger.debug("CRE_PreProcessor exiting normally..." )	

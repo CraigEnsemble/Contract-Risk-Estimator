@@ -19,7 +19,7 @@ def setupLogging( outputDirectory, outputDataFile, logger ):
 	logger.addHandler(ch)
 	
 	# Add some spaces below command for readability
-	print( "\n\n")
+	print( "\n")
 	logger.debug("Outputting results,artifacts, and logs to: " + outputDirectory)
 	logger.debug("Opening log file: " + logFileName)
 	print( "\n" )
